@@ -118,7 +118,7 @@ Les éléments suivants ne sont **pas implémentés** dans cette version :
 - ☕ **Java**
 - 🍃 **Spring Boot**
 - 💾 **Spring Data JPA**
-- 🗄️ Base de données relationnelle (PostgreSQL)
+- 🗄️ Base de données relationnelle (MySQL)
 - 🔧 **Maven**
 
 ---
