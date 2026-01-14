@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "reservation")
 public class Reservation {
 
     @Id
@@ -80,17 +80,20 @@ public class Reservation {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = Instant.now();
     }
 
     public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
+    @PreUpdate
+    public void onUpdate() {
+        this.updatedAt = Instant.now();
     }
+
 
     public boolean cancel()   {
         if (this.status == ReservationStatus.PENDING || this.status == ReservationStatus.CONFIRMED) {
@@ -102,6 +105,11 @@ public class Reservation {
 
     public boolean changePeriod(LocalDateTime newStart, LocalDateTime newEnd) {
         if (this.status == ReservationStatus.PENDING || this.status == ReservationStatus.CONFIRMED) {
+
+            if (newEnd.isBefore(newStart)) {
+                throw new IllegalArgumentException("End date must be after start date");
+            }
+
             this.startDateTime = newStart;
             this.endDateTime = newEnd;
             return true;
