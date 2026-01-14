@@ -1,12 +1,11 @@
 package com.example.reservation.model;
 
 import jakarta.persistence.*;
-import org.apache.tomcat.util.json.JSONFilter;
 
 import java.time.Instant;
 
 @Entity
-@Table(name = "reservationHistory")
+@Table(name = "reservation_history")
 public class ReservationHistory {
 
     @Id
@@ -15,22 +14,23 @@ public class ReservationHistory {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private HistoryAction action;
-    @Column(nullable = false)
-    private JSONFilter previousState;
-    @Column(nullable = false)
-    private JSONFilter newState;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String previousState;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String newState;
     @Column(nullable = false)
     private Instant createdAt;
 
-    @ManyToOne(targetEntity = Reservation.class)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
+
 
     public ReservationHistory() {
         super();
     }
 
-    public ReservationHistory(Long id, HistoryAction action, JSONFilter previousState, JSONFilter newState, Instant createdAt, Reservation reservation) {
-        this.id = id;
+    public ReservationHistory(HistoryAction action, String previousState, String newState, Instant createdAt, Reservation reservation) {
         this.action = action;
         this.previousState = previousState;
         this.newState = newState;
@@ -54,19 +54,19 @@ public class ReservationHistory {
         this.action = action;
     }
 
-    public JSONFilter getPreviousState() {
+    public String getPreviousState() {
         return previousState;
     }
 
-    public void setPreviousState(JSONFilter previousState) {
+    public void setPreviousState(String previousState) {
         this.previousState = previousState;
     }
 
-    public JSONFilter getNewState() {
+    public String getNewState() {
         return newState;
     }
 
-    public void setNewState(JSONFilter newState) {
+    public void setNewState(String newState) {
         this.newState = newState;
     }
 
@@ -74,8 +74,9 @@ public class ReservationHistory {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = Instant.now();
     }
 
     public Reservation getReservation() {
