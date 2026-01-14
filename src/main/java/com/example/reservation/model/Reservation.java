@@ -120,6 +120,7 @@ public class Reservation {
     public boolean canBeModified() {
         return this.status == ReservationStatus.PENDING || this.status == ReservationStatus.CONFIRMED;
     }
+
 }
 
 
